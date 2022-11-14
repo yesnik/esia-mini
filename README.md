@@ -16,10 +16,11 @@
 1. Клонируем этот репозиторий: 
   ```
   git clone git@github.com:yesnik/esia-mini.git
+  cd esia-mini
   ```
-2. Устанавливаем зависимости. У вас в системе должен быть установлен `PHP 8`, `composer`:
+2. Устанавливаем зависимости:
   ```
-  composer install
+  docker compose run php-cli composer install
   ```
 3. Запускаем Docker Compose
   ```

@@ -6,7 +6,7 @@ services:
         ports:
             - '8000:80'
         volumes:
-            - './:/app'
+            - './app:/app'
         depends_on:
             - php-fpm
 
@@ -14,4 +14,10 @@ services:
         build:
             context: docker/php-fpm
         volumes:
-            - './:/app'
+            - './app:/app'
+
+    php-cli:
+        build:
+            context: docker/php-cli
+        volumes:
+            - './app:/app'
