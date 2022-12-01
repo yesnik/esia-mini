@@ -1,32 +1,36 @@
 # Esia Mini
 
-Проект для демонстрации работы с тестовым стендом ЕСИА.
+Проект на Docker для демонстрации интеграции с тестовым стендом ЕСИА при помощи PHP.
 
-**Важно:** У вас должна быть мнемоника вашей информационной системы, зарегистрированной в ЕСИА, чтобы проект функционировал.
+**Важно:** Потребуется мнемоника вашей информационной системы, зарегистрированной в ЕСИА, чтобы проект функционировал.
 
 ## Технологии
 
-- Docker
+- Docker. Если на вашем ПК его нет, можете установить по [инструкции](https://docs.docker.com/engine/install/).
 - PHP 8
 - Nginx
 - OpenSSL, с поддержкой ГОСТ (gost engine)
 
 ## Установка
 
-1. Клонируем этот репозиторий: 
+1. Склонируем репозиторий: 
   ```
-  git clone git@github.com:yesnik/esia-mini.git
+  git clone https://github.com/yesnik/esia-mini.git
   cd esia-mini
   ```
-2. Устанавливаем зависимости:
+2. Убедимся, что Docker запущен на нашем ПК:
+  ```
+  service docker status
+  ```
+3. Установим зависимости:
   ```
   docker compose run php-cli composer install
   ```
-3. Запускаем Docker Compose
+4. Запустим Docker Compose
   ```
   docker compose up
   ```
-4. Указываем мнемонику своей системы в параметре `clientId` в файлах `public/index.php`, `public/response.php`.
+5. Укажем мнемонику своей системы в параметре `clientId` в файлах `app/public/index.php`, `app/public/response.php`.
 
 ## Проверка работы
 
