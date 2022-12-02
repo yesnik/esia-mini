@@ -48,36 +48,48 @@ cURL error 60: SSL certificate problem: unable to get local issuer certificate
 (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://esia-portal1.test.gosuslugi.ru/aas/oauth2/te 
 ```
 
-**Важно:** Для устранения этой ошибки мы отключили проверку сертификатов, т.к. не нашли другого способа.
+**Важно:** Для устранения этой ошибки мы отключили проверку сертификатов, т.к. это самый простой способ. В файле `app/public/response.php` для этого указали:
 
-Полезная информация по этой теме:
+```php
+$client = new GuzzleHttpClient(
+    new Client([
+        'verify' => false,
+    ])
+);
+```
 
-* В контейнер нужно установить сертификаты сайта Госуслуг. Файл сертификата копируем в папку:
-  ```
-  /usr/local/share/ca-certificates
-  ```
-  Это папка для локальных CA сертификатов, которые должны иметь расширение `.crt`.
+Также ошибку можно устранить, импортировав сертификат тестового стенда ЕСИА в хранилище доверенных сертификатов в контейнере `php-fpm`:
+
+1. Заходим в работающий контейнер php-fpm: `docker compose exec php-fpm sh`
+2. Получаем информацию о сертификате сервера
+    ```bash
+    openssl s_client esia-portal1.test.gosuslugi.ru:443
+    ```
+    В выводе этой команды нужно найти сертификат, его примерный вид:
+    ```
+    -----BEGIN CERTIFICATE-----
+    MIIHrTCCB1qgAwIBAgILAN/pVOMAAAAABiYwCgYIKoUDBwEBAwIwggE7MSEwHwYJ
+    ...
+    wzkYntwevFT0QnGIf6vUFRQJhadWgnX+OdPq4e3oq/2cNOi5eeYUDDpDHud1LOL/
+    yg==
+    -----END CERTIFICATE-----
+    ```
+3. Этот сертификат копируем в файл, к примеру `esia-test.crt`.
+4. Помещаем файл в `/usr/local/share/ca-certificates`. Это папка для локальных CA сертификатов, которые должны иметь расширение `.crt`.
+5. Выполняем команду для импорта сертификата: `update-ca-certificates`
+
+### Полезная информация
+
+* В [Методических рекомендациях](https://digital.gov.ru/ru/documents/6186/) говорится, что сертификаты тестовой и 
+   продуктивной сред ЕСИА, используемые для формирования электронных подписей ответов как поставщика, доступны
+   по ссылке: http://esia.gosuslugi.ru/public/esia.zip
 * Скопируем сертификаты с сайта Госуслуг и распакуем:
   ```
   cd /usr/local/src
   wget --no-check-certificate https://esia.gosuslugi.ru/public/esia.zip
   unzip esia.zip
   ```
-* Скопируем сертификат для тестового стенда и запустим команду на его импорт:
-  ```
-  cp ssl_test_2022_ru.crt /usr/local/share/ca-certificates/
-  update-ca-certificates
-  c_rehash
-  ```
-* Скачиваем ГОСТ 34.10-2012 Корневой сертификат "Минкомсвязь России" от 02.07.2021 с официального сайта: https://ca.gisca.ru/support/repository/ 
-  В нашем случае это: https://ca.gisca.ru/repository/AFF05C9E2464941E7EC2AB15C91539360B79AA9D.cer
-
-* Конвертируем его в PEM-формат (расширение .crt): 
-  ```
-   openssl x509 -inform DER -in AFF05C9E2464941E7EC2AB15C91539360B79AA9D.cer -out minsvyaz.crt
-  ```
-
-* Проверяем корректность работы:
+* Проверка корректности работы:
   ```
   openssl s_client -CApath /etc/ssl/certs -connect esia.gosuslugi.ru:443
   
@@ -85,9 +97,6 @@ cURL error 60: SSL certificate problem: unable to get local issuer certificate
   ```
   В случае ошибки вы увидите: `Verify return code: 21 (unable to verify the first certificate)`, в случае успеха:
   `Verify return code: 0 (ok)`.
-* В [Методических рекомендациях](https://digital.gov.ru/ru/documents/6186/) говорится, что сертификаты тестовой и 
-   продуктивной сред ЕСИА, используемые для формирования электронных подписей ответов как поставщика, доступны
-   по ссылке: http://esia.gosuslugi.ru/public/esia.zip
 
 ## Благодарности
 
