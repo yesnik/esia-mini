@@ -25,7 +25,7 @@ RUN apt-get install cmake -y \
   && make install \
   && rm -rf "/usr/local/src/*"
 
-COPY ./gost-engine.conf /usr/local/src/gost-engine.conf
+COPY ./gost-engine.cnf /usr/local/src/gost-engine.cnf
 
 # Edit openssl.conf to enable GOST engine
 ARG OPENSSL_CONFIG_PATH="${OPENSSL_LIB_DIR}/openssl.cnf"
