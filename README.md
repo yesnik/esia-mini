@@ -14,22 +14,22 @@
 ## Установка
 
 1. Склонируем репозиторий: 
-  ```
-  git clone https://github.com/yesnik/esia-mini.git
-  cd esia-mini
-  ```
-2. Убедимся, что Docker запущен на нашем ПК:
-  ```
-  service docker status
-  ```
+    ```bash
+    git clone https://github.com/yesnik/esia-mini.git
+    cd esia-mini
+    ```
+2. Убедимся, что Docker запущен на нашем ПК. Если это так, команда выведет список запущенных контейнеров:
+    ```bash
+    docker ps
+    ```
 3. Установим зависимости:
-  ```
-  docker compose run php-cli composer install
-  ```
+    ```bash
+    docker compose run php-cli composer install
+    ```
 4. Запустим Docker Compose
-  ```
-  docker compose up
-  ```
+    ```bash
+    docker compose up
+    ```
 5. Укажем мнемонику своей системы в параметре `clientId` в файлах `app/public/index.php`, `app/public/response.php`.
 
 ## Проверка работы
